@@ -70,6 +70,22 @@ The peak times are in the morning (8-9 AM) and evening (5-7 PM), with weekday us
 
 <br>
 
+**Top 10 Bike Stations Comparison**
+|   Rank | Classic Bike Station                |   Classic Counts | E-Bike Station                      |   E-Bike Counts |
+|-------:|:------------------------------------|-----------------:|:------------------------------------|----------------:|
+|      1 | Hyde Park Corner, Hyde Park         |           108954 | St. James’s Square, St. James’s     |            7098 |
+|      2 | Waterloo Station 3, Waterloo        |            92052 | Waterloo Station 3, Waterloo        |            6937 |
+|      3 | Wormwood Street, Liverpool Street   |            70025 | Wormwood Street, Liverpool Street   |            6551 |
+|      4 | Waterloo Station 1, Waterloo        |            69451 | Little Argyll Street, West End      |            6393 |
+|      5 | Hop Exchange, The Borough           |            65916 | Islington Green, Angel              |            5955 |
+|      6 | Brushfield Street, Liverpool Street |            65775 | Soho Square, Soho                   |            5220 |
+|      7 | Black Lion Gate, Kensington Gardens |            65573 | London Fields, Hackney Central      |            4890 |
+|      8 | Duke Street Hill, London Bridge     |            62888 | Brushfield Street, Liverpool Street |            4890 |
+|      9 | Albert Gate, Hyde Park              |            62178 | Liverpool Road (N1 Centre), Angel   |            4701 |
+|     10 | St. James’s Square, St. James’s     |            58293 | Waterloo Station 1, Waterloo        |            4686 |
+
+<br>
+
 ![Top Bike Stations Map](img/top_bike_stations.png)
 
 <br>
