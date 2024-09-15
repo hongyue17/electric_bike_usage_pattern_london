@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_6240365a2882d9c4be9ede36ab0edcc6 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_6240365a2882d9c4be9ede36ab0edcc6" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_6240365a2882d9c4be9ede36ab0edcc6 = L.map(
+                "map_6240365a2882d9c4be9ede36ab0edcc6",
+                {
+                    center: [51.509865, -0.118092],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 12,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_76aa74247658077f850dc0c1f6b9f7d3 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 20, "maxZoom": 20, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abcd", "tms": false}
+            );
+        
+    
+            tile_layer_76aa74247658077f850dc0c1f6b9f7d3.addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+            var circle_marker_0bc6516d51e7b2d564afd968c218c720 = L.circleMarker(
+                [51.503117, -0.15352],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 20.0, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_be832350293b9fa2580fe468288fd294 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_0210cfd42c2a71d5fc90fab4e398c371 = $(`<div id="html_0210cfd42c2a71d5fc90fab4e398c371" style="width: 100.0%; height: 100.0%;">Classic Bike - Hyde Park Corner, Hyde Park: 108954.0</div>`)[0];
+                popup_be832350293b9fa2580fe468288fd294.setContent(html_0210cfd42c2a71d5fc90fab4e398c371);
+            
+        
+
+        circle_marker_0bc6516d51e7b2d564afd968c218c720.bindPopup(popup_be832350293b9fa2580fe468288fd294)
+        ;
+
+        
+    
+    
+            var circle_marker_b5450d7b8b15852a4128103b44c2e541 = L.circleMarker(
+                [51.503791, -0.112824],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17.673054683627953, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_5edd5a1981e48f83333f2b2f5bf98090 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_f6275131c6e78d603c6c327ac8f8a3e2 = $(`<div id="html_f6275131c6e78d603c6c327ac8f8a3e2" style="width: 100.0%; height: 100.0%;">Classic Bike - Waterloo Station 3, Waterloo: 92052.0</div>`)[0];
+                popup_5edd5a1981e48f83333f2b2f5bf98090.setContent(html_f6275131c6e78d603c6c327ac8f8a3e2);
+            
+        
+
+        circle_marker_b5450d7b8b15852a4128103b44c2e541.bindPopup(popup_5edd5a1981e48f83333f2b2f5bf98090)
+        ;
+
+        
+    
+    
+            var circle_marker_514c454f707fc6250c2dc7b40d6b9ec1 = L.circleMarker(
+                [51.516154, -0.082422],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.665317473429154, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_5861791983deccde0ee0e537fbd31abb = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4e56a81925e6162bb8947c194b6731fb = $(`<div id="html_4e56a81925e6162bb8947c194b6731fb" style="width: 100.0%; height: 100.0%;">Classic Bike - Wormwood Street, Liverpool Street: 70205.0</div>`)[0];
+                popup_5861791983deccde0ee0e537fbd31abb.setContent(html_4e56a81925e6162bb8947c194b6731fb);
+            
+        
+
+        circle_marker_514c454f707fc6250c2dc7b40d6b9ec1.bindPopup(popup_5861791983deccde0ee0e537fbd31abb)
+        ;
+
+        
+    
+    
+            var circle_marker_1c0865bfa80edac6be9f2da4994b57ec = L.circleMarker(
+                [51.504027, -0.113864],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.56151219780825, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_040bc5bb2788f63b4deba2b654b39d9e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a391094f5d78e200da7da77ba615cb0b = $(`<div id="html_a391094f5d78e200da7da77ba615cb0b" style="width: 100.0%; height: 100.0%;">Classic Bike - Waterloo Station 1, Waterloo: 69451.0</div>`)[0];
+                popup_040bc5bb2788f63b4deba2b654b39d9e.setContent(html_a391094f5d78e200da7da77ba615cb0b);
+            
+        
+
+        circle_marker_1c0865bfa80edac6be9f2da4994b57ec.bindPopup(popup_040bc5bb2788f63b4deba2b654b39d9e)
+        ;
+
+        
+    
+    
+            var circle_marker_be789dbaf28bc6cfbfe755757ab558e4 = L.circleMarker(
+                [51.504627, -0.091773],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.074838922848175, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_137492814305533078c61be8aae93826 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c7734e4fc31f73cb3b27ef2dd2a13c3a = $(`<div id="html_c7734e4fc31f73cb3b27ef2dd2a13c3a" style="width: 100.0%; height: 100.0%;">Classic Bike - Hop Exchange, The Borough: 65916.0</div>`)[0];
+                popup_137492814305533078c61be8aae93826.setContent(html_c7734e4fc31f73cb3b27ef2dd2a13c3a);
+            
+        
+
+        circle_marker_be789dbaf28bc6cfbfe755757ab558e4.bindPopup(popup_137492814305533078c61be8aae93826)
+        ;
+
+        
+    
+    
+            var circle_marker_c4baeb0d1eb06e1ac7fa78d55e1737cc = L.circleMarker(
+                [51.518908, -0.079249],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.055427060961506, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_221faf67a95e0d6b290d1d8ffacd90cf = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e9db9d11f2aad926d6686b975970f8f0 = $(`<div id="html_e9db9d11f2aad926d6686b975970f8f0" style="width: 100.0%; height: 100.0%;">Classic Bike - Brushfield Street, Liverpool Street: 65775.0</div>`)[0];
+                popup_221faf67a95e0d6b290d1d8ffacd90cf.setContent(html_e9db9d11f2aad926d6686b975970f8f0);
+            
+        
+
+        circle_marker_c4baeb0d1eb06e1ac7fa78d55e1737cc.bindPopup(popup_221faf67a95e0d6b290d1d8ffacd90cf)
+        ;
+
+        
+    
+    
+            var circle_marker_6e189dfff69c62d24c7c657406a63e0c = L.circleMarker(
+                [51.509908, -0.187842],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.027617159535216, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_764168510a9589d7527a7a6a696a1540 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_83e46caa6ad360a482b813f20f8a9121 = $(`<div id="html_83e46caa6ad360a482b813f20f8a9121" style="width: 100.0%; height: 100.0%;">Classic Bike - Black Lion Gate, Kensington Gardens: 65573.0</div>`)[0];
+                popup_764168510a9589d7527a7a6a696a1540.setContent(html_83e46caa6ad360a482b813f20f8a9121);
+            
+        
+
+        circle_marker_6e189dfff69c62d24c7c657406a63e0c.bindPopup(popup_764168510a9589d7527a7a6a696a1540)
+        ;
+
+        
+    
+    
+            var circle_marker_1f64d0164a31963d23b0cfde5fb73bdc = L.circleMarker(
+                [51.506304, -0.087262],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13.6579657470125, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_62fbb249afd5cc06c7aafc89ef2d80ea = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d906ffbf995955b274e39775796cf992 = $(`<div id="html_d906ffbf995955b274e39775796cf992" style="width: 100.0%; height: 100.0%;">Classic Bike - Duke Street Hill, London Bridge: 62888.0</div>`)[0];
+                popup_62fbb249afd5cc06c7aafc89ef2d80ea.setContent(html_d906ffbf995955b274e39775796cf992);
+            
+        
+
+        circle_marker_1f64d0164a31963d23b0cfde5fb73bdc.bindPopup(popup_62fbb249afd5cc06c7aafc89ef2d80ea)
+        ;
+
+        
+    
+    
+            var circle_marker_af8316bc9c6e517ccf5344e59a989078 = L.circleMarker(
+                [51.507424, -0.134621],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.731538080290765, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_dad6395df732809a682293d98b413da3 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_08c2283098b6329408ba3edba2ccd948 = $(`<div id="html_08c2283098b6329408ba3edba2ccd948" style="width: 100.0%; height: 100.0%;">Classic Bike - St. James's Square, St. James's: 34368.0</div>`)[0];
+                popup_dad6395df732809a682293d98b413da3.setContent(html_08c2283098b6329408ba3edba2ccd948);
+            
+        
+
+        circle_marker_af8316bc9c6e517ccf5344e59a989078.bindPopup(popup_dad6395df732809a682293d98b413da3)
+        ;
+
+        
+    
+    
+            var circle_marker_aacc82a5fa4841b7fe487cbd9cc32f56 = L.circleMarker(
+                [51.511553, -0.09294],
+                {"bubblingMouseEvents": true, "color": "#FF9800", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF9800", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.590285808689906, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_e50383eec148a856624a2fe46e328e99 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3366135731cc393e2d109e5a77b8cc18 = $(`<div id="html_3366135731cc393e2d109e5a77b8cc18" style="width: 100.0%; height: 100.0%;">Classic Bike - Queen Street 1, Bank: 33342.0</div>`)[0];
+                popup_e50383eec148a856624a2fe46e328e99.setContent(html_3366135731cc393e2d109e5a77b8cc18);
+            
+        
+
+        circle_marker_aacc82a5fa4841b7fe487cbd9cc32f56.bindPopup(popup_e50383eec148a856624a2fe46e328e99)
+        ;
+
+        
+    
+    
+            var circle_marker_9435478a41e2491d7026fe17932b1d5e = L.circleMarker(
+                [51.507424, -0.134621],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.977201387741616, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_89298dfecdeea0782cac9b0fbf047aa2 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e862e80066386d1fdf20dc0520d759cf = $(`<div id="html_e862e80066386d1fdf20dc0520d759cf" style="width: 100.0%; height: 100.0%;">E-bike - St. James's Square, St. James's: 7098.0</div>`)[0];
+                popup_89298dfecdeea0782cac9b0fbf047aa2.setContent(html_e862e80066386d1fdf20dc0520d759cf);
+            
+        
+
+        circle_marker_9435478a41e2491d7026fe17932b1d5e.bindPopup(popup_89298dfecdeea0782cac9b0fbf047aa2)
+        ;
+
+        
+    
+    
+            var circle_marker_d5785711c34e09c31832f000cafa6c09 = L.circleMarker(
+                [51.503791, -0.112824],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.955036070268187, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_e3f38771924510197a5c9afec194c9c0 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3fb53a363da792cb50f081f7f2134863 = $(`<div id="html_3fb53a363da792cb50f081f7f2134863" style="width: 100.0%; height: 100.0%;">E-bike - Waterloo Station 3, Waterloo: 6937.0</div>`)[0];
+                popup_e3f38771924510197a5c9afec194c9c0.setContent(html_3fb53a363da792cb50f081f7f2134863);
+            
+        
+
+        circle_marker_d5785711c34e09c31832f000cafa6c09.bindPopup(popup_e3f38771924510197a5c9afec194c9c0)
+        ;
+
+        
+    
+    
+            var circle_marker_9c523f4dc04ff77379c7fd2cba06c6a3 = L.circleMarker(
+                [51.516154, -0.082422],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.901894377443692, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_909726e8a5ae6c63c8c2861e65628054 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_bb70f7819718c34456c7bf0156543415 = $(`<div id="html_bb70f7819718c34456c7bf0156543415" style="width: 100.0%; height: 100.0%;">E-bike - Wormwood Street, Liverpool Street: 6551.0</div>`)[0];
+                popup_909726e8a5ae6c63c8c2861e65628054.setContent(html_bb70f7819718c34456c7bf0156543415);
+            
+        
+
+        circle_marker_9c523f4dc04ff77379c7fd2cba06c6a3.bindPopup(popup_909726e8a5ae6c63c8c2861e65628054)
+        ;
+
+        
+    
+    
+            var circle_marker_01f0ffa2701f7705a597a543b2ff5b8e = L.circleMarker(
+                [51.514499, -0.141423],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.8801420783082765, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_fa92b5cad56649b7a51a0f148ebc758b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d0e72e05d55994e1169a3311da4c0878 = $(`<div id="html_d0e72e05d55994e1169a3311da4c0878" style="width: 100.0%; height: 100.0%;">E-bike - Little Argyll Street, West End: 6393.0</div>`)[0];
+                popup_fa92b5cad56649b7a51a0f148ebc758b.setContent(html_d0e72e05d55994e1169a3311da4c0878);
+            
+        
+
+        circle_marker_01f0ffa2701f7705a597a543b2ff5b8e.bindPopup(popup_fa92b5cad56649b7a51a0f148ebc758b)
+        ;
+
+        
+    
+    
+            var circle_marker_87266bda125ada2d0a7dc927ad1169e8 = L.circleMarker(
+                [51.536384, -0.102757],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.819841400958202, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_f3d2778fe4b30f5a47c3c34f749aa3cf = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_84221210836b383edf7b111350b0ff08 = $(`<div id="html_84221210836b383edf7b111350b0ff08" style="width: 100.0%; height: 100.0%;">E-bike - Islington Green, Angel: 5955.0</div>`)[0];
+                popup_f3d2778fe4b30f5a47c3c34f749aa3cf.setContent(html_84221210836b383edf7b111350b0ff08);
+            
+        
+
+        circle_marker_87266bda125ada2d0a7dc927ad1169e8.bindPopup(popup_f3d2778fe4b30f5a47c3c34f749aa3cf)
+        ;
+
+        
+    
+    
+            var circle_marker_65595da2047e29a8e84c56f60c03b6f4 = L.circleMarker(
+                [51.515631, -0.132328],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.718651908144722, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_4282b30218190322e7c77d770e080478 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2e0f6aa71d18f9f9003a8861c7d5e4f5 = $(`<div id="html_2e0f6aa71d18f9f9003a8861c7d5e4f5" style="width: 100.0%; height: 100.0%;">E-bike - Soho Square , Soho: 5220.0</div>`)[0];
+                popup_4282b30218190322e7c77d770e080478.setContent(html_2e0f6aa71d18f9f9003a8861c7d5e4f5);
+            
+        
+
+        circle_marker_65595da2047e29a8e84c56f60c03b6f4.bindPopup(popup_4282b30218190322e7c77d770e080478)
+        ;
+
+        
+    
+    
+            var circle_marker_d7a97511b31aed3480f931c42d59374c = L.circleMarker(
+                [51.518908, -0.079249],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.673219890963159, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_80a4a93f623d63df39ce9d7e82246e8e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b4f829fc0bcbdda2a73067382aeff31d = $(`<div id="html_b4f829fc0bcbdda2a73067382aeff31d" style="width: 100.0%; height: 100.0%;">E-bike - Brushfield Street, Liverpool Street: 4890.0</div>`)[0];
+                popup_80a4a93f623d63df39ce9d7e82246e8e.setContent(html_b4f829fc0bcbdda2a73067382aeff31d);
+            
+        
+
+        circle_marker_d7a97511b31aed3480f931c42d59374c.bindPopup(popup_80a4a93f623d63df39ce9d7e82246e8e)
+        ;
+
+        
+    
+    
+            var circle_marker_f89ff3c777baac8c636276067da5f16f = L.circleMarker(
+                [51.54119, -0.058826],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.673219890963159, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_70d4fa18013a7a9aa1d913fe4ec460f2 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2ab97ad591e1e75353092cac114f2a19 = $(`<div id="html_2ab97ad591e1e75353092cac114f2a19" style="width: 100.0%; height: 100.0%;">E-bike - London Fields, Hackney Central: 4890.0</div>`)[0];
+                popup_70d4fa18013a7a9aa1d913fe4ec460f2.setContent(html_2ab97ad591e1e75353092cac114f2a19);
+            
+        
+
+        circle_marker_f89ff3c777baac8c636276067da5f16f.bindPopup(popup_70d4fa18013a7a9aa1d913fe4ec460f2)
+        ;
+
+        
+    
+    
+            var circle_marker_86efb28505c1b9367ed7ff33380fb43d = L.circleMarker(
+                [51.503919, -0.113426],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.418249903629055, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_a0357627b662a4b3ed4395a84e9af801 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_8ca99dc4a2f5978e339d2519807ba2ac = $(`<div id="html_8ca99dc4a2f5978e339d2519807ba2ac" style="width: 100.0%; height: 100.0%;">E-bike - Waterloo Station 2, Waterloo: 3038.0</div>`)[0];
+                popup_a0357627b662a4b3ed4395a84e9af801.setContent(html_8ca99dc4a2f5978e339d2519807ba2ac);
+            
+        
+
+        circle_marker_86efb28505c1b9367ed7ff33380fb43d.bindPopup(popup_a0357627b662a4b3ed4395a84e9af801)
+        ;
+
+        
+    
+    
+            var circle_marker_03602b612a736aa3c7306d59df31da68 = L.circleMarker(
+                [51.504027, -0.113864],
+                {"bubblingMouseEvents": true, "color": "#00AF91", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00AF91", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.3330304532187895, "stroke": true, "weight": 1}
+            ).addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+    
+        var popup_1719ded25e3f9f87f3f035a500d6a7d8 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e3b935a896bed57d2b83539060f41b88 = $(`<div id="html_e3b935a896bed57d2b83539060f41b88" style="width: 100.0%; height: 100.0%;">E-bike - Waterloo Station 1, Waterloo: 2419.0</div>`)[0];
+                popup_1719ded25e3f9f87f3f035a500d6a7d8.setContent(html_e3b935a896bed57d2b83539060f41b88);
+            
+        
+
+        circle_marker_03602b612a736aa3c7306d59df31da68.bindPopup(popup_1719ded25e3f9f87f3f035a500d6a7d8)
+        ;
+
+        
+    
+    
+            tile_layer_76aa74247658077f850dc0c1f6b9f7d3.addTo(map_6240365a2882d9c4be9ede36ab0edcc6);
+        
+</script>
+</html>

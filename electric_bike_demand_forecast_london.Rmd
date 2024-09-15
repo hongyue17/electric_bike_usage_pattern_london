@@ -1,0 +1,1417 @@
+---
+title: "Coursework submission for Transport Data Science (TRAN5340M)"
+subtitle: "Shared e-Bikes in London: Analysing Usage Trends and Patterns"
+output:
+  pdf_document:
+    #latex_engine: xelatex
+    number_sections: true
+author: "Student 201798764"
+always_allow_html: true
+header-includes:
+   - \usepackage{longtable}
+   - \usepackage{booktabs}
+   - \usepackage{array}
+   - \usepackage{caption}
+---
+
+# Statement {-}
+
+```
+TRAN5340M
+Transport Data Science
+Assignment Title:	Shared e-Bikes in London: Analysing Usage Trends and Patterns
+Student ID: 201798764
+Word Count:	2870	
+Lecturer: Dr Robin Lovelace
+Submission Date: 2024-05-23
+Semester: 2			
+Academic Year: 202324
+Generative AI Category: AMBER
+```
+---
+
+\newpage
+
+```{r setup, include=FALSE}
+# Set global chunk options
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, eval = TRUE, fig.align='center', fig.show='hold')
+
+library(dplyr)
+library(tidyr)
+library(scales)
+library(ggplot2)
+library(leaflet)
+library(htmlwidgets)
+library(htmltools)
+library(webshot)
+library(webshot2)
+library(calendar)
+library(lubridate)
+library(paletteer)
+library(gridExtra)
+library(purrr)
+library(readr)
+library(patchwork)
+library(randomForest)
+library(caret)
+library(shiny)
+library(png)
+library(grid)
+library(knitr)
+library(kableExtra)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+# Function to include HTML widget in R Markdown
+include_html <- function(file) {
+  html <- readLines(file)
+  HTML(paste(html, collapse = "\n"))
+}
+```
+
+# Introduction
+
+Shared bicycle systems globally have revolutionized urban mobility, significantly altering how city residents commute and connect with public transport systems. In London, the success of shared bikes, particularly with the integration of e-bikes, has been noteworthy. To sustain and build on this progress, Transport for London (TfL) launched its first docked e-bikes in October 2022. This initiative caters to the growing demand for efficient and sustainable transportation options within the metropolitan area, introducing a novel dimension to the city’s shared mobility landscape.
+
+This research investigates the adoption and impact of shared e-bikes in London, focusing on usage patterns, and spatial and temporal distribution in high-demand areas like commercial hubs and commuting hotspots. By analyzing these elements, the study aims to identify trends that can guide the strategic placement and promotion of e-bike stations to enhance their accessibility and operational efficiency. The report, "Lime in London (2023)," underscores the significant benefits of shared e-bike services in reducing traffic congestion and improving urban mobility. It also provides detailed recommendations for optimizing bike-share operations, especially during peak commuting times and in high-traffic areas. This research is particularly timely as it aligns with TfL’s 2023 initiatives that seek to increase cycling trips significantly, reflecting a strategic shift towards more sustainable urban transport solutions.
+
+## Scope
+
+The primary goal of this report is to analyze Santander shared e-bike usage in London for 2023, identifying usage trends and developing strategies to enhance the bike-sharing program's operations. The analysis focuses on evaluating extensive trip data and docking station patterns, as well as understanding user behaviors across various times and locations within the city. By leveraging detailed datasets of trip records and station information, this report aims to provide actionable insights to support policy decisions and operational enhancements. The findings are presented in sections covering data understanding and preprocessing (Section 2), thorough temporal and geospatial analyses (Sections 3 and 4), predictive modeling to forecast usage trends (Section 5), and a detailed examination of usage patterns at the highest usage e-bike station (Section 6). This will culminate in strategic policy recommendations (Section 7) designed to improve the efficiency and accessibility of London’s e-bike sharing system.
+
+## Area of Study
+
+The geographical scope of this study is focused on the city of London, with particular emphasis on the regions served by the Santander Cycle Scheme. The analysis covers various boroughs within London, examining both central and peripheral regions to understand how e-bike usage varies across different urban densities and neighborhood characteristics. Special attention is given to areas with high commuter traffic and regions that have shown significant uptake of shared mobility solutions.
+
+## Datasets
+
+The primary datasets employed in this study were the shared bike trip (OD) data, accessible from the [public TFL data](https://cycling.data.tfl.gov.uk/) repository. TFL periodically updates the shared bike trip data, starting from 2014, with the latest available records extending up to December 2023. Dock location coordinates were extracted using an API. Subsequently, these two datasets were merged to facilitate further geographical analysis. The main dataset was compiled by consolidating 38 CSV files, encompassing all trip data from 792 bike dock stations in London throughout 2023.
+
+
+# Data Understanding and Pre-Processing
+
+Before analyzing the data, it is essential to thoroughly understand the raw dataset and prepare it appropriately for further analysis. This section focuses on comprehending the structure and content of the original dataset.
+
+```{r}
+# install.packages("reticulate")
+#install.packages("lubridate")
+#install.packages("calendar")
+#install.packages("paletteer")
+#install.packages("patchwork")
+#install.packages("htmlwidgets")
+#install.packages("randomForest")
+#install.packages("webshot")
+#install.packages("webshot2")
+#webshot::install_phantomjs()
+#install.packages("caret")
+#install.packages("shiny")
+#install.packages("jpeg")
+#install.packages("png")
+#tinytex::reinstall_tinytex(repository = "illinois")
+#tinytex::tlmgr_install("subfig")
+#install.packages("kableExtra")
+```
+
+
+```{r}
+df_jan1 = read.csv('Dataset/350JourneyDataExtract26Dec2022-01Jan2023.csv')
+df_jan2 = read.csv('Dataset/351JourneyDataExtract02Jan2023-08Jan2023.csv')
+df_jan3 = read.csv('Dataset/352JourneyDataExtract09Jan2023-15Jan2023.csv')
+df_jan4 = read.csv('Dataset/353JourneyDataExtract16Jan2023-22Jan2023.csv')
+df_jan5 = read.csv('Dataset/354JourneyDataExtract23Jan2023-29Jan2023.csv')
+
+df_feb1 = read.csv('Dataset/355JourneyDataExtract30Jan2023-05Feb2023.csv')
+df_feb2 = read.csv('Dataset/356JourneyDataExtract06Feb2023-12Feb2023.csv')
+df_feb3 = read.csv('Dataset/357JourneyDataExtract13Feb2023-19Feb2023.csv')
+df_feb4 = read.csv('Dataset/358JourneyDataExtract20Feb2023-26Feb2023.csv')
+
+df_mar1 = read.csv('Dataset/359JourneyDataExtract27Feb2023-05Mar2023.csv')
+df_mar2 = read.csv('Dataset/360JourneyDataExtract06Mar2023-12Mar2023.csv')
+df_mar3 = read.csv('Dataset/361JourneyDataExtract13Mar2023-19Mar2023.csv')
+df_mar4 = read.csv('Dataset/362JourneyDataExtract20Mar2023-26Mar2023.csv')
+
+df_april1 = read.csv('Dataset/363JourneyDataExtract27Mar2023-02Apr2023.csv')
+df_april2 = read.csv('Dataset/364JourneyDataExtract03Apr2023-09Apr2023.csv')
+df_april3 = read.csv('Dataset/365JourneyDataExtract10Apr2023-16Apr2023.csv')
+df_april4 = read.csv('Dataset/366JourneyDataExtract17Apr2023-23Apr2023.csv')
+df_april5 = read.csv('Dataset/367JourneyDataExtract24Apr2023-30Apr2023.csv')
+
+df_may1 = read.csv('Dataset/368JourneyDataExtract01May2023-07May2023.csv')
+df_may2 = read.csv('Dataset/369JourneyDataExtract08May2023-14May2023.csv')
+df_may3 = read.csv('Dataset/370JourneyDataExtract15May2023-21May2023.csv')
+df_may4 = read.csv('Dataset/371JourneyDataExtract22May2023-28May2023.csv')
+
+df_june1 = read.csv('Dataset/372JourneyDataExtract29May2023-04Jun2023.csv')
+df_june2 = read.csv('Dataset/373JourneyDataExtract05Jun2023-11Jun2023.csv')
+df_june3 = read.csv('Dataset/374JourneyDataExtract12Jun2023-18Jun2023.csv')
+df_june4 = read.csv('Dataset/375JourneyDataExtract19Jun2023-30Jun2023.csv')
+
+df_july1 = read.csv('Dataset/376JourneyDataExtract01Jul2023-14Jul2023.csv')
+df_july2 = read.csv('Dataset/377JourneyDataExtract15Jul2023-31Jul2023.csv')
+
+df_aug1 = read.csv('Dataset/378JourneyDataExtract01Aug2023-14Aug2023.csv')
+df_aug2 = read.csv('Dataset/378JourneyDataExtract15Aug2023-31Aug2023.csv')
+
+df_sep1 = read.csv('Dataset/379JourneyDataExtract01Sep2023-14Sep2023.csv')
+df_sep2 = read.csv('Dataset/380JourneyDataExtract15Sep2023-30Sep2023.csv')
+
+df_oct1 = read.csv('Dataset/381JourneyDataExtract01Oct2023-14Oct2023.csv')
+df_oct2 = read.csv('Dataset/382JourneyDataExtract15Oct2023-31Oct2023.csv')
+df_nov1 = read.csv('Dataset/383JourneyDataExtract01Nov2023-14Nov2023.csv')
+df_nov2 = read.csv('Dataset/384JourneyDataExtract15Nov2023-30Nov2023.csv')
+df_dec1 = read.csv('Dataset/385JourneyDataExtract01Dec2023-14Dec2023.csv')
+df_dec2 = read.csv('Dataset/386JourneyDataExtract15Dec2023-31Dec2023.csv')
+```
+```{r}
+list_of_dfs = list(df_jan1, df_jan2, df_jan3, df_jan4, df_jan5,
+                    df_feb1, df_feb2, df_feb3, df_feb4,
+                    df_mar1, df_mar2, df_mar3, df_mar4,
+                    df_april1, df_april2, df_april3, df_april4, df_april5,
+                    df_may1, df_may2, df_may3, df_may4,
+                    df_june1, df_june2, df_june3, df_june4,
+                    df_july1, df_july2, df_aug1, df_aug2,
+                    df_sep1, df_sep2, df_oct1, df_oct2,
+                    df_nov1, df_nov2, df_dec1, df_dec2)
+```
+
+```{r}
+
+list_of_dfs = map(list_of_dfs, ~ mutate(., 
+                                         Start.station.number = as.character(Start.station.number),
+                                         End.station.number = as.character(End.station.number)))
+
+df_year = bind_rows(list_of_dfs)
+```
+
+
+## Understanding the Datasets
+
+The raw dataset comprises 8,563,356 entries across 11 columns. Utilizing the `info()` function helps in comprehending the column names and their respective data types. Each entry represents a singular trip, encompassing details such as starting time, end time, starting station, end station, bike number, bike model (classic or e-bike), and total travel duration.
+
+```{r, echo = FALSE}
+#head(df_year)
+#str(df_year)
+```
+```{r, echo = FALSE}
+# Print the first few entries of both 'Start.date' and 'End.date'
+#print(df_year$`Start.date`[1:10])
+#print(df_year$`End.date`[1:10])
+```
+## Data Preparation
+
+After combining and loading the dataset, the data type of the 'date' column needed to be converted from an object to datetime type for further analysis. Post-conversion, new columns such as "Month," "Weekday," "Date," and "Hour" were created using the .dt accessor to categorize trips. This research excludes trips spanning from December 31, 2022, to 2023, retaining only the data within 2023. Trips that start and end at the same station with a total travel time of less than one minute, and trips that exceed 24 hours in duration, are also removed from the dataset. Additionally, the total duration in milliseconds was converted to minutes for better comprehension.
+
+```{r, echo = FALSE}
+df_year$`Start.date` = ymd_hm(df_year$`Start.date`)
+df_year$`End.date` = ymd_hm(df_year$`End.date`)
+
+#print(head(df_year$`Start.date`))
+#print(head(df_year$`End.date`))
+```
+
+```{r, echo = FALSE}
+df_year = df_year %>%
+  filter(!(Start.station == End.station & Total.duration..ms. < 60000))
+
+# Convert 'Total duration' from milliseconds to 'Total duration (min)'
+df_year = df_year %>%
+  mutate(Total.duration = as.duration(Total.duration..ms. / 1000),
+         Total.duration.min = as.numeric(Total.duration, units = "minutes"))
+
+# Filter to keep only trips where total duration is less than 1440 minutes
+df_year = df_year %>%
+  filter(Total.duration.min < 1440)
+
+#head(select(df_year, Total.duration, Total.duration.min))
+```
+```{r}
+df_year = df_year %>%
+  mutate(
+    Month = month(`Start.date`),
+    Weekday = wday(`Start.date`, week_start = 1) - 1,  # Monday=0
+    Date = as.Date(`Start.date`),
+    Hour = hour(`Start.date`)
+  )
+
+df_year = df_year %>%
+  filter(year(`Start.date`) == 2023)
+```
+
+
+## Exploratory Data Analysis
+
+A key aspect of exploratory data analysis (EDA) is to extract summary statistics and visualize general trends from the dataset. The describe() function is employed to summarize key numerical variables, such as "duration time (mins)." Additionally, we explore the overall proportion of e-bike usage and its variation across different months.
+
+### Monthly Ride Trend
+
+The usage of e-bikes follows the overall trend observed. June and September are the peak months for rides, reflecting the highest popularity. Conversely, the winter months exhibit the lowest riding activity, indicating a significant seasonal impact on usage patterns.
+
+```{r}
+# monthly_trips <- df_year %>%
+#   group_by(Month) %>%
+#   summarise(TripCount = n(), .groups = 'drop')
+# 
+# # Plot the data with the same aesthetics as the original plot
+# ggplot(monthly_trips, aes(x = Month, y = TripCount)) +
+#   geom_line(color = "#004F98", size = 1) +  # Line thickness matching the original
+#   geom_point(color = "#004F98", size = 2.5) +  # Point size matching the original
+#   labs(
+#     title = "Monthly Trip Count",
+#     x = "Month",
+#     y = "Number of Trips",
+#     caption = "Data source: df_year"
+#   ) +
+#   scale_y_continuous(labels = scales::comma) +  # Display Y-axis with comma separators if needed
+#   scale_x_continuous(breaks = 1:12, labels = month.abb) +  # Use abbreviated month names
+#   theme_grey(base_size = 15) +  # Use default ggplot grey theme with increased base font size
+#   theme(
+#     plot.title = element_text(face = "bold", size = 14, hjust = 0.5),  # Match title size and style
+#     axis.title.x = element_text(size = 12, margin = margin(t = 10)),  # Match x-axis title size
+#     axis.title.y = element_text(size = 12, margin = margin(r = 10)),  # Match y-axis title size
+#     axis.text = element_text(size = 10),  # Match axis text size
+#     panel.grid.major = element_line(color = "grey70", size = 0.5),  # Match major grid lines
+#     panel.grid.minor = element_line(color = "grey85", size = 0.25),  # Match minor grid lines
+#     plot.caption = element_text(size = 10, hjust = 1, margin = margin(t = 10))  # Match caption size and style
+#   )
+```
+```{r}
+# monthly_bikes <- df_year %>%
+#   group_by(Month, Bike.model) %>%
+#   summarise(TripCount = n(), .groups = 'drop') %>%
+#   pivot_wider(names_from = Bike.model, values_from = TripCount, values_fill = list(TripCount = 0))
+# 
+# # Calculate the proportion of eBikes
+# monthly_bikes <- monthly_bikes %>%
+#   mutate(`EBIKE Proportion` = PBSC_EBIKE / (CLASSIC + PBSC_EBIKE))
+# 
+# # Plot the data
+# ggplot(monthly_bikes, aes(x = Month, y = `EBIKE Proportion`)) +
+#   geom_line(color = "#25A18E", size = 1) +  # Thicker line
+#   geom_point(color = "#25A18E", size = 2.5) +  # Larger points
+#   labs(title = "Monthly Proportion of eBikes", 
+#        x = "Month", 
+#        y = "Proportion of eBikes",
+#        caption = "Data source: df_year") +  # Add caption for data source
+#   scale_y_continuous(labels = percent_format(accuracy = 1)) +  # Display Y-axis as percentages
+#   scale_x_continuous(breaks = 1:12, labels = month.abb) +  # Use abbreviated month names
+#   theme_grey(base_size = 15) +  # Use default ggplot grey theme with increased base font size
+#   theme(
+#     plot.title = element_text(face = "bold", size = 14, hjust = 0.5),  # Adjust title size
+#     axis.title.x = element_text(size = 12, margin = margin(t = 10)),  # Adjust x-axis title size
+#     axis.title.y = element_text(size = 12, margin = margin(r = 10)),  # Adjust y-axis title size
+#     axis.text = element_text(size = 10),  # Adjust axis text size
+#     plot.caption = element_text(size = 10)  # Adjust caption size
+#   )
+```
+
+
+```{r}
+# Aggregate data: Count trips by month
+monthly_trips <- df_year %>%
+  group_by(Month) %>%
+  summarise(TripCount = n(), .groups = 'drop')
+
+# Aggregate data: Count trips by month and bike model
+monthly_bikes <- df_year %>%
+  group_by(Month, Bike.model) %>%
+  summarise(TripCount = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = Bike.model, values_from = TripCount, values_fill = list(TripCount = 0))
+
+# Calculate the proportion of eBikes
+monthly_bikes <- monthly_bikes %>%
+  mutate(`EBIKE Proportion` = PBSC_EBIKE / (CLASSIC + PBSC_EBIKE))
+```
+
+```{r, fig.width=20, fig.height=6}
+# Create the first plot for total trip count by month
+plot1 <- ggplot(monthly_trips, aes(x = Month, y = TripCount)) +
+  geom_line(color = "#004F98", size = 1) +  # Line color and size
+  geom_point(color = "#004F98", size = 2.5) +  # Point color and size
+  labs(
+    title = "Monthly Trip Count",
+    x = "Month",
+    y = "Number of Trips",
+    caption = "Data source: TFL"
+  ) +
+  scale_y_continuous(labels = scales::comma) +  # Y-axis with comma separators
+  scale_x_continuous(breaks = 1:12, labels = month.abb) +  # Use abbreviated month names
+  theme_grey(base_size = 15) +  # Use default ggplot grey theme with increased base font size
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),  # Title style
+    axis.title.x = element_text(size = 12, margin = ggplot2::margin(t = 10, unit = "pt")),  # X-axis title style
+    axis.title.y = element_text(size = 12, margin = ggplot2::margin(r = 10, unit = "pt")),  # Y-axis title style
+    axis.text = element_text(size = 10),
+    plot.caption = element_text(size = 10, hjust = 1, margin = ggplot2::margin(t = 10, unit = "pt"))  # Caption style
+  )
+
+# Create the second plot for eBike trip count by month
+plot2 <- ggplot(monthly_bikes, aes(x = Month, y = PBSC_EBIKE)) +
+  geom_line(color = "#25A18E", size = 1) +  # Line color and size
+  geom_point(color = "#25A18E", size = 2.5) +  # Point color and size
+  labs(
+    title = "Monthly Ebike Trip Count",
+    x = "Month",
+    y = "Number of Trips",
+    caption = "Data source: TFL"
+  ) +
+  scale_y_continuous(labels = scales::comma) +  # Y-axis with comma separators
+  scale_x_continuous(breaks = 1:12, labels = month.abb) +  # Use abbreviated month names
+  theme_grey(base_size = 15) +  # Use default ggplot grey theme with increased base font size
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),  # Title style
+    axis.title.x = element_text(size = 12, margin = ggplot2::margin(t = 10, unit = "pt")),  # X-axis title style
+    axis.title.y = element_text(size = 12, margin = ggplot2::margin(r = 10, unit = "pt")),  # Y-axis title style
+    axis.text = element_text(size = 10),  # Axis text size
+    plot.caption = element_text(size = 10)  # Caption style
+  )
+
+# Arrange the two plots side by side
+grid.arrange(plot1, plot2, ncol = 2)
+```
+
+### Proportion Analysis
+
+In the overall bike usage, e-bike trips constitute approximately 7% of all rides, with the proportion fluctuating between 6.5% and 8.5% throughout the year. Notably, there is an increase in the percentage of e-bike usage during the winter months compared to the summer. This trend suggests that people may prefer using e-bikes in colder weather, potentially due to the added ease and comfort provided by electric assistance.
+
+```{r}
+# # Calculate the counts of each bike model
+# model_counts <- df_year %>%
+#   count(Bike.model) %>%
+#   rename(Count = n)
+# 
+# # Create a data frame for plotting
+# pie_data <- model_counts %>%
+#   mutate(Proportion = Count / sum(Count),
+#          Label = paste0(round(Proportion * 100, 1), "%"))
+# 
+# # Plot the pie chart
+# ggplot(pie_data, aes(x = "", y = Count, fill = Bike.model)) +
+#   geom_bar(stat = "identity", width = 1) +
+#   coord_polar("y", start = 0) +
+#   scale_fill_manual(values = c('#EDE0D4', '#25A18E')) +
+#   labs(title = "Distribution of Bike Models", fill = "Bike Model") +
+#   theme_void() +  # Removes the background, grid, and axis text
+#   theme(plot.title = element_text(hjust = 0.5)) +
+#   geom_text(aes(label = Label), position = position_stack(vjust = 0.5))
+```
+```{r}
+# # Aggregate data: Count trips by month and bike model
+# monthly_bikes <- df_year %>%
+#   group_by(Month, Bike.model) %>%
+#   summarise(TripCount = n(), .groups = 'drop') %>%
+#   pivot_wider(names_from = Bike.model, values_from = TripCount, values_fill = list(TripCount = 0))
+# 
+# # Calculate the proportion of eBikes
+# monthly_bikes <- monthly_bikes %>%
+#   mutate(`EBIKE Proportion` = PBSC_EBIKE / (CLASSIC + PBSC_EBIKE))
+# 
+# # Plot the data
+# ggplot(monthly_bikes, aes(x = Month, y = `EBIKE Proportion`)) +
+#   geom_line(color = "#25A18E", size = 1) +  # Thicker line
+#   geom_point(color = "#25A18E", size = 2.5) +  # Larger points
+#   labs(title = "Monthly Proportion of eBikes", 
+#        x = "Month", 
+#        y = "Proportion of eBikes",
+#        caption = "Data source: df_year") +  # Add caption for data source
+#   scale_y_continuous(labels = percent_format(accuracy = 1)) +  # Display Y-axis as percentages
+#   scale_x_continuous(breaks = 1:12, labels = as.character(1:12)) +  # Use numeric month labels
+#   theme_grey(base_size = 15) +  # Use default ggplot grey theme with increased base font size
+#   theme(
+#     plot.title = element_text(face = "bold", size = 14, hjust = 0.5),  # Adjust title size
+#     axis.title.x = element_text(size = 12, margin = margin(t = 10)),  # Adjust x-axis title size
+#     axis.title.y = element_text(size = 12, margin = margin(r = 10)),  # Adjust y-axis title size
+#     axis.text = element_text(size = 10),  # Adjust axis text size
+#     plot.caption = element_text(size = 10)  # Adjust caption size
+#   )
+```
+```{r}
+# Creating Pie Chart
+model_counts <- df_year %>%
+  count(Bike.model) %>%
+  rename(Count = n)
+
+pie_data <- model_counts %>%
+  mutate(Proportion = Count / sum(Count),
+         Label = paste0(round(Proportion * 100, 1), "%"))
+
+plot1 <- ggplot(pie_data, aes(x = "", y = Count, fill = Bike.model)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  scale_fill_manual(values = c('#ffb74d', '#25A18E')) +
+  labs(title = "Distribution of Bike Models", fill = "Bike Model") +
+  theme_void() +  # Removes the background, grid, and axis text
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_text(aes(label = Label), position = position_stack(vjust = 0.5))
+
+# Creating Line Plot
+monthly_bikes <- df_year %>%
+  group_by(Month, Bike.model) %>%
+  summarise(TripCount = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = Bike.model, values_from = TripCount, values_fill = list(TripCount = 0))
+
+monthly_bikes <- monthly_bikes %>%
+  mutate(`EBIKE Proportion` = PBSC_EBIKE / (CLASSIC + PBSC_EBIKE))
+
+plot2 <- ggplot(monthly_bikes, aes(x = Month, y = `EBIKE Proportion`)) +
+  geom_line(color = "#25A18E", size = 1) +  # Thicker line
+  geom_point(color = "#25A18E", size = 2.5) +  # Larger points
+  labs(title = "Monthly Proportion of eBikes", 
+       x = "Month", 
+       y = "Proportion of eBikes",
+       caption = "Data source: TFL") +  # Add caption for data source
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +  # Display Y-axis as percentages
+  scale_x_continuous(breaks = 1:12, labels = as.character(1:12)) +  # Use numeric month labels
+  theme_grey(base_size = 15) +  # Use default ggplot grey theme with increased base font size
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),  # Adjust title size
+    axis.title.x = element_text(size = 12, margin = ggplot2::margin(t = 10, unit = "pt")),  # Adjust x-axis title size
+    axis.title.y = element_text(size = 12, margin = ggplot2::margin(r = 10, unit = "pt")),  # Adjust y-axis title size
+    axis.text = element_text(size = 10),  # Adjust axis text size
+    plot.caption = element_text(size = 10)  # Adjust caption size
+  )
+```
+
+```{r, fig.width=20, fig.height=6}
+grid.arrange(plot1, plot2, ncol = 2)
+```
+
+### Average Monthly Ride Duration
+
+Overall, both classic bikes and e-bikes experience longer ride durations in the summer, averaging around 19.5 minutes. Notably, from April to August, the duration of rides on classic bikes exceeds that of e-bikes. However, from September to March, e-bikes show longer ride durations. This trend suggests that in colder weather, people tend to use e-bikes for longer trips.
+
+```{r, fig.width=20, fig.height=6}
+# Filter data for each bike model
+classic_trips <- df_year %>% filter(Bike.model == 'CLASSIC')
+ebike_trips <- df_year %>% filter(Bike.model == 'PBSC_EBIKE')
+
+# Calculate average duration per month for each bike model
+average_duration_classic <- classic_trips %>%
+  group_by(Month) %>%
+  summarise(AverageDuration = mean(Total.duration.min, na.rm = TRUE))
+
+average_duration_ebike <- ebike_trips %>%
+  group_by(Month) %>%
+  summarise(AverageDuration = mean(Total.duration.min, na.rm = TRUE))
+
+# Merge the data for plotting
+average_duration <- merge(average_duration_classic, average_duration_ebike, by = "Month", suffixes = c("_Classic", "_EBike"))
+
+# Plot the data
+ggplot(average_duration, aes(x = Month)) +
+  geom_line(aes(y = AverageDuration_Classic, color = 'Classic Bike Avg Duration'), size = 1) +
+  geom_point(aes(y = AverageDuration_Classic, color = 'Classic Bike Avg Duration'), size = 2.5) +
+  geom_line(aes(y = AverageDuration_EBike, color = 'EBike Avg Duration'), size = 1) +
+  geom_point(aes(y = AverageDuration_EBike, color = 'EBike Avg Duration'), size = 2.5) +
+  scale_color_manual(values = c('Classic Bike Avg Duration' = '#ffb74d', 'EBike Avg Duration' = '#25A18E')) +
+  labs(title = 'Average Trip Duration per Month by Bike Model', 
+       x = 'Month', 
+       y = 'Average Duration (min)',
+       color = 'Bike Model',
+       caption = 'Data source: TFL') +
+  scale_x_continuous(breaks = 1:12, labels = month.abb) +
+  theme_grey(base_size = 15) +  # Use default ggplot grey theme with increased base font size
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),  # Adjust title size
+    axis.title.x = element_text(size = 12, margin = ggplot2::margin(t = 10, unit = "pt")),  # Adjust x-axis title size
+    axis.title.y = element_text(size = 12, margin = ggplot2::margin(r = 10, unit = "pt")),  # Adjust y-axis title size
+    axis.text = element_text(size = 10),  # Adjust axis text size
+    plot.caption = element_text(size = 10)  # Adjust caption size
+  )
+```
+```{r}
+#names(df_year)
+```
+
+# The ‘When’: Temporal Distribution of eBike Usage
+
+Riding patterns can be influenced by riders' daily routines and are likely to vary throughout the year. This section focuses on the temporal distribution of both classic bikes and e-bikes, aiming to explore and highlight their commonalities and differences. By examining these usage patterns, we seek to understand how factors such as time of day and seasonality impact bike usage.
+
+## Methodology
+
+To more effectively compare temporal distributions, heatmaps are utilized to highlight bike usage patterns. The dataset is divided into two categories: classic bikes and e-bikes, which helps visualise both annual and weekly patterns. For year-long trends, calplot() is employed, while grouping by 'weekday' and 'hour' facilitates the creation of hourly data for analysing weekly and hourly patterns. These visualizations make it easier to observe variations in bike usage over different timescales.
+
+## Results and Discussions
+
+### Annual and Weekly Pattern
+
+Both bike modes exhibit increased popularity during the summer, with classic bikes peaking in June and e-bikes peaking in August and September. Additionally, both types are more frequently used on weekdays compared to weekends. Notably, the usage rate of e-bikes declines significantly during weekends, suggesting that e-bikes are predominantly used for commuting purposes.
+
+```{r, fig.width=25, fig.height=3.75}
+# Convert 'Start.date' to Date type and filter for classic bike trips
+df_year$Start.date <- as.POSIXct(df_year$Start.date)
+classic_trips <- df_year %>% 
+  filter(Bike.model == 'CLASSIC') %>%
+  mutate(Start.date = as.Date(Start.date)) %>%
+  group_by(Start.date) %>%
+  summarise(Count = n())
+
+# Create a sequence of dates for the entire year to fill missing dates
+all_dates <- data.frame(Start.date = seq(min(classic_trips$Start.date), max(classic_trips$Start.date), by = "day"))
+
+# Merge with classic_trips to fill missing dates with 0
+classic_trips_full <- merge(all_dates, classic_trips, by = "Start.date", all.x = TRUE)
+classic_trips_full[is.na(classic_trips_full$Count), "Count"] <- 0
+
+# Extract year, month, week, and weekday information
+classic_trips_full <- classic_trips_full %>%
+  mutate(Year = year(Start.date),
+         Month = month(Start.date, label = TRUE),
+         Week = week(Start.date),
+         Weekday = wday(Start.date, label = TRUE, week_start = 1))  # Ensure week starts on Monday
+
+# Define the color palette and reverse it
+color_palette <- rev(paletteer_c("grDevices::Oranges", 30))
+
+# Plot the calendar heatmap
+ggplot(classic_trips_full, aes(x = Week, y = Weekday, fill = Count)) +
+  geom_tile(color = "white") +
+  facet_wrap(~Month, scales = "free_x", ncol = 12) +  # Arrange months in a single row
+  scale_fill_gradientn(colors = color_palette, name = "Trips Count") +
+  labs(title = "Classic Bike Trips Calendar", x = "Week", y = "Weekday") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    axis.text.x = element_text(angle = 0, hjust = 1),  # Straight x-axis labels for readability
+    axis.text.y = element_text(size = 10),  # Adjust y-axis text size
+    strip.text = element_text(size = 10)
+  )
+```
+```{r,fig.width=25, fig.height=3.75}
+# Convert 'Start.date' to Date type and filter for E-Bike trips
+df_year$Start.date <- as.POSIXct(df_year$Start.date)
+ebike_trips <- df_year %>% 
+  filter(Bike.model == 'PBSC_EBIKE') %>%
+  mutate(Start.date = as.Date(Start.date)) %>%
+  group_by(Start.date) %>%
+  summarise(Count = n())
+
+# Create a sequence of dates for the entire year to fill missing dates
+all_dates <- data.frame(Start.date = seq(min(ebike_trips$Start.date), max(ebike_trips$Start.date), by = "day"))
+
+# Merge with ebike_trips to fill missing dates with 0
+ebike_trips_full <- merge(all_dates, ebike_trips, by = "Start.date", all.x = TRUE)
+ebike_trips_full[is.na(ebike_trips_full$Count), "Count"] <- 0
+
+# Extract year, month, week, and weekday information
+ebike_trips_full <- ebike_trips_full %>%
+  mutate(Year = year(Start.date),
+         Month = month(Start.date, label = TRUE),
+         Week = week(Start.date),
+         Weekday = wday(Start.date, label = TRUE, week_start = 1))  # Ensure week starts on Monday
+
+# Define the color palette and reverse it
+color_palette <- rev(paletteer_c("grDevices::BluYl", 30))
+
+# Plot the calendar heatmap for E-Bike trips
+ggplot(ebike_trips_full, aes(x = Week, y = Weekday, fill = Count)) +
+  geom_tile(color = "white") +
+  facet_wrap(~Month, scales = "free_x", ncol = 12) +  # Arrange months in a single row
+  scale_fill_gradientn(colors = color_palette, name = "Trips Count") +
+  labs(title = "E-Bike Trips Calendar", x = "Week", y = "Weekday") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    axis.text.x = element_text(angle = 0, hjust = 1),  # Tilt x-axis labels for better readability
+    axis.text.y = element_text(size = 10),  # Adjust y-axis text size
+    strip.text = element_text(size = 10)
+  )
+```
+
+### Weekly and Hourly Pattern
+Both types of bikes exhibit higher usage during weekdays, particularly during commuting hours. Tuesday, Wednesday, and Thursday are the most popular days of the week, with peak usage times aligning with typical commuting periods. Specifically, the classic bikes show the highest usage during the morning commute at 8 AM, while e-bikes are most frequently used during the evening commute between 5 and 6 PM.
+
+```{r}
+df_year <- df_year %>%
+  mutate(Start.date = as.POSIXct(Start.date),
+         Weekday = weekdays(Start.date))
+```
+
+```{r}
+# Define the weekdays for consistent ordering in reverse
+weekday_levels <- c("Sunday", "Saturday", "Friday", "Thursday", "Wednesday", "Tuesday", "Monday")
+
+# Prepare data for Classic bikes
+classic_data <- df_year %>%
+  filter(Bike.model == 'CLASSIC') %>%
+  mutate(Weekday = factor(Weekday, levels = weekday_levels, ordered = TRUE)) %>%
+  group_by(Weekday, Hour) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = Hour, values_from = Count, values_fill = list(Count = 0))
+
+# Prepare data for E-Bikes
+ebike_data <- df_year %>%
+  filter(Bike.model == 'PBSC_EBIKE') %>%
+  mutate(Weekday = factor(Weekday, levels = weekday_levels, ordered = TRUE)) %>%
+  group_by(Weekday, Hour) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = Hour, values_from = Count, values_fill = list(Count = 0))
+
+# Melt the data for ggplot2
+classic_data_melted <- classic_data %>%
+  pivot_longer(cols = -Weekday, names_to = "Hour", values_to = "Count") %>%
+  mutate(Hour = as.numeric(Hour))
+
+ebike_data_melted <- ebike_data %>%
+  pivot_longer(cols = -Weekday, names_to = "Hour", values_to = "Count") %>%
+  mutate(Hour = as.numeric(Hour))
+
+# Ensure correct ordering of weekdays
+classic_data_melted$Weekday <- factor(classic_data_melted$Weekday, levels = weekday_levels)
+ebike_data_melted$Weekday <- factor(ebike_data_melted$Weekday, levels = weekday_levels)
+```
+```{r, fig.width=20, fig.height=4}
+# Plot for Classic bikes
+classic_plot <- ggplot(classic_data_melted, aes(x = Hour, y = Weekday, fill = Count)) +
+  geom_tile(color = "white") +
+  scale_fill_gradientn(colors = rev(paletteer_c("grDevices::Oranges", 30)), name = "Ride Count") +
+  labs(title = "Classic Ride Count per Hour", x = "Hour of the Day", y = "Day of the Week") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10)
+  )
+
+# Plot for E-Bikes
+ebike_plot <- ggplot(ebike_data_melted, aes(x = Hour, y = Weekday, fill = Count)) +
+  geom_tile(color = "white") +
+  scale_fill_gradientn(colors = rev(paletteer_c("grDevices::BluYl", 30)), name = "Ride Count") +
+  labs(title = "E-Bike Ride Count per Hour", x = "Hour of the Day", y = "Day of the Week") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10)
+  )
+
+# Combine the plots side by side
+combined_plot <- classic_plot + ebike_plot + plot_layout(ncol = 2)
+
+# Display the combined plot
+combined_plot
+```
+
+
+# The ‘Where’: Geospatial Distribution of eBike Usage
+
+Following the exploration of the temporal distribution of e-bike usage, this section delves into a geographical analysis. It identifies popular routes, key starting points, and frequent end stations to enhance understanding of potential user profiles and their travel purposes.
+
+## Methodology
+The initial step involves integrating bike dock latitude and longitude data from the TfL API with the main trip dataset using station names to facilitate the merge. After incorporating the latitude and longitude information, each station is visualized on a map. The dataset is divided into two categories: classic bikes and e-bikes, to discern usage patterns between the two modes. To identify popular routes, the analysis employs a group_by() function to aggregate data by "Start Station" and "End Station," extracting the top 10 most popular routes. On the map, the top 5000 routes for classic bikes and the top 2000 routes for e-bikes are plotted, with the thickness of each route line indicating its popularity. Routes that begin and end at the same station are visualized as circles, with the size of the circle reflecting the frequency of such trips. The results are also saved as an HTML file for better viewing.
+
+```{r}
+df_docks_cor <- read_csv('bikepoints_total.csv')
+
+# Create a list of station coordinates
+station_coords <- df_docks_cor %>%
+  transmute(commonName, lat, lon) %>%
+  split(.$commonName) %>%
+  map(~ list(lat = .x$lat, lon = .x$lon))
+
+# Define a function to get coordinates
+get_coords <- function(station, coord) {
+  if (station %in% names(station_coords)) {
+    return(station_coords[[station]][[coord]])
+  } else {
+    return(NA)
+  }
+}
+
+# Add latitude and longitude for start and end stations
+df_year <- df_year %>%
+  mutate(
+    `Start station lat` = map_dbl(`Start.station`, ~ get_coords(.x, "lat")),
+    `Start station lon` = map_dbl(`Start.station`, ~ get_coords(.x, "lon")),
+    `End station lat` = map_dbl(`End.station`, ~ get_coords(.x, "lat")),
+    `End station lon` = map_dbl(`End.station`, ~ get_coords(.x, "lon"))
+  )
+```
+
+```{r}
+df_year_na = df_year %>%
+  drop_na(`Start station lat`, `Start station lon`, `End station lat`, `End station lon`)
+```
+
+
+## Results and Discussions
+
+### Popular Route
+The map visualization of popular routes for classic and e-bikes reveals distinct patterns. Classic bikes predominantly feature circular routes that begin and end at the same location, primarily around parks and green spaces like Hyde Park, Queen Elizabeth Olympic Park, and Kensington Gardens. This suggests that classic bike usage is heavily oriented towards leisure activities within these areas.
+Conversely, e-bike routes display a more dispersed and interconnecting pattern, indicating a strong commuting function. For instance, the most frequented routes between Stratford Station and Monier Road highlight a significant demand for e-bikes, suggesting their utilization for practical commuting purposes. Additional routes, such as those from Wormwood Street to Waterloo Station and Liverpool Road to Eagle Wharf Road, primarily connect commercial areas, further supporting the commuting usage of e-bikes.
+These observations underscore the differing roles that classic bikes and e-bikes play in urban mobility, with classic bikes serving more recreational purposes and e-bikes fulfilling daily commute needs. This analysis assists in understanding the specific needs and behaviors of different user groups, providing valuable insights for urban planning and transportation management.
+
+```{r}
+# Filter data for Classic and E-Bikes
+classic_data <- df_year_na %>% filter(Bike.model == 'CLASSIC')
+ebike_data <- df_year_na %>% filter(Bike.model == 'PBSC_EBIKE')
+
+# Function to get the popular routes
+get_popular_routes <- function(df) {
+  popular_routes <- df %>%
+    group_by(Start.station, End.station) %>%
+    summarise(Count = n(), .groups = 'drop') %>%
+    arrange(desc(Count))
+  return(head(popular_routes, 10))
+}
+
+# Get the top 10 popular routes for Classic and E-Bikes
+classic_popular_routes <- get_popular_routes(classic_data)
+ebike_popular_routes <- get_popular_routes(ebike_data)
+
+# # Print the results
+# cat("\nTop 10 Popular Routes for PBSC_EBIKE Bikes:\n")
+# print(ebike_popular_routes)
+# 
+# cat("\nTop 10 Popular Routes for CLASSIC Bikes:\n")
+# print(classic_popular_routes)
+```
+
+Top 5 Popular Classic Bike Routes
+
+| Rank | Start Stations                        | End Station                      | Counts |
+|------|---------------------------------------|----------------------------------|--------|
+| 1    | Hyde Park Corner, Hyde Park           | Hyde Park Corner, Hyde Park      | 17,906 |
+| 2    | Podium, Queen Elizabeth Olympic Park  | Podium, Queen Elizabeth Olympic Park | 9,051 |
+| 3    | Albert Gate, Hyde Park                | Albert Gate, Hyde Park           | 7,309  |
+| 4    | Black Lion Gate, Kensington Gardens   | Black Lion Gate, Kensington Gardens | 6,972  |
+| 5    | Triangle Car Park, Hyde Park          | Triangle Car Park, Hyde Park     | 6,157  |
+
+Top 5 Popular E-bike Routes
+
+| Rank | Start Stations                        | End Station                      | Counts |
+|------|---------------------------------------|----------------------------------|--------|
+| 1    | Stratford Station, Stratford          | Monier Road, Hackney Wick        | 291    |
+| 2    | London Street, Paddington             | Little Argyll Street, West End   | 260    |
+| 3    | Monier Road, Hackney Wick             | Stratford Station, Stratford     | 222    |
+| 4    | Wormwood Street, Liverpool Street     | Waterloo Station 3, Waterloo     | 193    |
+| 5    | Podium, Queen Elizabeth Olympic Park | Podium, Queen Elizabeth Olympic Park | 176    |
+
+
+
+```{r}
+# Function to plot routes
+plot_routes <- function(dataframe, color, max_weight = 40, num_routes = 500) {
+  # Aggregate route counts
+  popular_routes <- dataframe %>%
+    group_by(Start.station, End.station) %>%
+    summarise(Count = n(), .groups = 'drop') %>%
+    arrange(desc(Count))
+  
+  # Create map
+  bike_map <- leaflet() %>%
+    addProviderTiles(providers$CartoDB.Positron) %>%
+    setView(lng = -0.118092, lat = 51.509865, zoom = 12)
+  
+  # Define line thickness and opacity parameters
+  min_weight <- 1
+  min_count <- max(1, min(popular_routes$Count))
+  max_count <- max(popular_routes$Count)
+  min_opacity <- 0.2
+  max_opacity <- 0.8
+  
+  # Draw routes
+  for (i in 1:min(num_routes, nrow(popular_routes))) {
+    row <- popular_routes[i, ]
+    start_station <- dataframe %>% filter(Start.station == row$Start.station) %>% slice(1)
+    end_station <- dataframe %>% filter(End.station == row$End.station) %>% slice(1)
+    
+    if (nrow(start_station) == 0 || nrow(end_station) == 0) {
+      next
+    }
+    
+    start_loc <- c(start_station$`Start station lat`, start_station$`Start station lon`)
+    end_loc <- c(end_station$`End station lat`, end_station$`End station lon`)
+    
+    if (any(is.na(start_loc)) || any(is.na(end_loc))) {
+      next
+    }
+    
+    weight <- ((row$Count - min_count) / (max_count - min_count)) * (max_weight - min_weight) + min_weight
+    opacity <- ((row$Count - min_count) / (max_count - min_count)) * (max_opacity - min_opacity) + min_opacity
+    
+    # Define popup and tooltip
+    popup_content <- paste("Route:", row$Start.station, "to", row$End.station, "<br>Trips:", row$Count)
+    tooltip_content <- paste(row$Start.station, "->", row$End.station)
+    
+    bike_map <- bike_map %>%
+      addPolylines(lng = c(start_loc[2], end_loc[2]), lat = c(start_loc[1], end_loc[1]),
+                   color = color, weight = weight, opacity = opacity,
+                   popup = popup_content, label = tooltip_content)
+  }
+  
+  return(bike_map)
+}
+
+# # Create and display the map for Classic bikes
+# classic_map <- plot_routes(classic_data, '#FF9800', max_weight = 40, num_routes = 50)
+# classic_map
+# saveWidget(classic_map, "classic_map.html", selfcontained = TRUE)
+# webshot2::webshot("classic_map.html", "classic_map.png")
+```
+
+```{r}
+# ebike_map <- plot_routes(ebike_data, '#00AF91', max_weight = 10, num_routes = 50)
+# ebike_map
+# saveWidget(ebike_map, "ebike_map.html", selfcontained = TRUE)
+# webshot2::webshot("ebike_map.html", "ebike_map.png")
+```
+
+```{r}
+# Classic and E-Bike Trip Routes Comparison
+```
+
+
+```{r, fig.width=10.8, fig.height=3.8}
+img_trip <- readPNG("trip_map.png")
+
+ggplot() +
+  annotation_custom(
+    rasterGrob(img_trip, width = unit(1, "npc"), height = unit(1, "npc")),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
+  ) +
+  theme_void()
+```
+
+```{r}
+# data <- data.frame(
+#   Rank = 1:10,
+#   Classic_Bike_Station = c(
+#     "Hyde Park Corner, Hyde Park",
+#     "Waterloo Station 3, Waterloo",
+#     "Wormwood Street, Liverpool Street",
+#     "Waterloo Station 1, Waterloo",
+#     "Hop Exchange, The Borough",
+#     "Brushfield Street, Liverpool Street",
+#     "Black Lion Gate, Kensington Gardens",
+#     "Duke Street Hill, London Bridge",
+#     "Albert Gate, Hyde Park",
+#     "St. James's Square, St. James's"
+#   ),
+#   Classic_Counts = c(
+#     108954, 92052, 70025, 69451, 65916, 65775, 65573, 62888, 62178, 58293
+#   ),
+#   E_Bike_Station = c(
+#     "St. James's Square, St. James's",
+#     "Waterloo Station 3, Waterloo",
+#     "Wormwood Street, Liverpool Street",
+#     "Little Argyll Street, West End",
+#     "Islington Green, Angel",
+#     "Soho Square, Soho",
+#     "London Fields, Hackney Central",
+#     "Brushfield Street, Liverpool Street",
+#     "Liverpool Road (N1 Centre), Angel",
+#     "Waterloo Station 1, Waterloo"
+#   ),
+#   E_Bike_Counts = c(
+#     7098, 6937, 6551, 6393, 5955, 5220, 4890, 4890, 4701, 4686
+#   )
+# )
+# 
+# pdf_table <- kable(data, format = "latex", booktabs = TRUE, caption = "Comparison of Popular Routes for Classic Bikes and E-Bikes") %>%
+#   kable_styling(font_size = 7) %>%
+#   column_spec(1, bold = TRUE)
+# 
+# pdf_table
+```
+
+
+### Popular Stations
+
+Stations located near major transport hubs such as Waterloo and Liverpool Street Station exhibit high usage rates due to their extensive transportation connections. Classic bikes demonstrate a more recreational usage pattern, with Hyde Park being the most frequented location. St. James's Square records the highest usage of e-bikes. Stations situated in Soho, Islington, and Hackney also show significant e-bike usage, indicating a distinct preference for e-bikes in these areas.
+
+```{r}
+# Filter data for CLASSIC and PBSC_EBIKE bike models
+classic_df <- df_year_na %>% filter(Bike.model == "CLASSIC")
+ebike_df <- df_year_na %>% filter(Bike.model == "PBSC_EBIKE")
+```
+
+```{r}
+# Calculate start and end station counts for CLASSIC bikes
+classic_start_counts <- classic_df %>%
+  group_by(`Start.station`, `Start station lat`, `Start station lon`) %>%
+  summarise(StartCount = n(), .groups = 'drop')
+
+classic_end_counts <- classic_df %>%
+  group_by(`End.station`, `End station lat`, `End station lon`) %>%
+  summarise(EndCount = n(), .groups = 'drop')
+
+# Combine start and end counts for CLASSIC bikes and get the top 10 stations
+classic_total_counts <- full_join(classic_start_counts, classic_end_counts, 
+                                  by = c("Start.station" = "End.station", 
+                                         "Start station lat" = "End station lat", 
+                                         "Start station lon" = "End station lon")) %>%
+  mutate(TotalCount = coalesce(StartCount, 0) + coalesce(EndCount, 0)) %>%
+  arrange(desc(TotalCount)) %>%
+  top_n(10, TotalCount)
+
+# Calculate start and end station counts for eBikes
+ebike_start_counts <- ebike_df %>%
+  group_by(`Start.station`, `Start station lat`, `Start station lon`) %>%
+  summarise(StartCount = n(), .groups = 'drop')
+
+ebike_end_counts <- ebike_df %>%
+  group_by(`End.station`, `End station lat`, `End station lon`) %>%
+  summarise(EndCount = n(), .groups = 'drop')
+
+# Combine start and end counts for eBikes and get the top 10 stations
+ebike_total_counts <- full_join(ebike_start_counts, ebike_end_counts, 
+                                by = c("Start.station" = "End.station", 
+                                       "Start station lat" = "End station lat", 
+                                       "Start station lon" = "End station lon")) %>%
+  mutate(TotalCount = coalesce(StartCount, 0) + coalesce(EndCount, 0)) %>%
+  arrange(desc(TotalCount)) %>%
+  top_n(10, TotalCount)
+
+# # Print the top 10 stations
+# print("Top 10 Classic Bike Stations:\n")
+# print(classic_total_counts)
+# 
+# print("Top 10 Ebike Stations:\n")
+# print(ebike_total_counts)
+```
+
+Top 10 Bike Stations Comparison
+
+| Rank | Classic Bike Station               | Classic Counts | E-Bike Station                     | E-Bike Counts |
+|------|------------------------------------|----------------|------------------------------------|---------------|
+| 1    | Hyde Park Corner, Hyde Park        | 108,954        | St. James's Square, St. James's    | 7,098         |
+| 2    | Waterloo Station 3, Waterloo       | 92,052         | Waterloo Station 3, Waterloo       | 6,937         |
+| 3    | Wormwood Street, Liverpool Street  | 70,025         | Wormwood Street, Liverpool Street  | 6,551         |
+| 4    | Waterloo Station 1, Waterloo       | 69,451         | Little Argyll Street, West End     | 6,393         |
+| 5    | Hop Exchange, The Borough          | 65,916         | Islington Green, Angel             | 5,955         |
+| 6    | Brushfield Street, Liverpool Street| 65,775         | Soho Square, Soho                  | 5,220         |
+| 7    | Black Lion Gate, Kensington Gardens| 65,573         | London Fields, Hackney Central     | 4,890         |
+| 8    | Duke Street Hill, London Bridge    | 62,888         | Brushfield Street, Liverpool Street| 4,890         |
+| 9    | Albert Gate, Hyde Park             | 62,178         | Liverpool Road (N1 Centre), Angel  | 4,701         |
+| 10   | St. James's Square, St. James's    | 58,293         | Waterloo Station 1, Waterloo       | 4,686         |
+
+```{r}
+# Create a leaflet map with smaller circle markers
+m <- leaflet() %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  setView(lng = -0.118092, lat = 51.509865, zoom = 12) %>%
+  addCircleMarkers(data = classic_total_counts, 
+                   lat = ~`Start station lat`, lng = ~`Start station lon`,
+                   radius = ~sqrt(TotalCount) / 12, color = "#FF9800", stroke = TRUE, weight = 1.5, fillOpacity = 0.35,
+                   label = ~paste(`Start.station`, "<br>", "Count:", TotalCount),
+                   group = "Classic Bikes") %>%
+  addCircleMarkers(data = ebike_total_counts, 
+                   lat = ~`Start station lat`, lng = ~`Start station lon`,
+                   radius = ~sqrt(TotalCount) / 12, color = "#00AF91", stroke = TRUE, weight = 1.5, fillOpacity = 0.35,
+                   label = ~paste(`Start.station`, "<br>", "Count:", TotalCount),
+                   group = "E-Bikes") %>%
+  addLayersControl(overlayGroups = c("Classic Bikes", "E-Bikes"),
+                   options = layersControlOptions(collapsed = FALSE))
+
+```
+```{r, fig.width=20, fig.height=6}
+# m
+```
+```{r}
+# saveWidget(m, "top_bike_stations_map.html")
+# webshot2::webshot("top_bike_stations_map.html", "top_bike_stations_map.png")
+```
+
+```{r, fig.width=7, fig.height=4.4}
+img <- readPNG("top_bike_stations_map.png")
+
+ggplot() +
+  annotation_custom(
+    rasterGrob(img, width = unit(1, "npc"), height = unit(1, "npc")),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
+  ) +
+  theme_void()
+```
+
+```{r}
+data <- data.frame(
+  Rank = 1:10,
+  Classic_Bike_Station = c(
+    "Hyde Park Corner, Hyde Park",
+    "Waterloo Station 3, Waterloo",
+    "Wormwood Street, Liverpool Street",
+    "Waterloo Station 1, Waterloo",
+    "Hop Exchange, The Borough",
+    "Brushfield Street, Liverpool Street",
+    "Black Lion Gate, Kensington Gardens",
+    "Duke Street Hill, London Bridge",
+    "Albert Gate, Hyde Park",
+    "St. James's Square, St. James's"
+  ),
+  Classic_Counts = c(
+    108954, 92052, 70025, 69451, 65916, 65775, 65573, 62888, 62178, 58293
+  ),
+  E_Bike_Station = c(
+    "St. James's Square, St. James's",
+    "Waterloo Station 3, Waterloo",
+    "Wormwood Street, Liverpool Street",
+    "Little Argyll Street, West End",
+    "Islington Green, Angel",
+    "Soho Square, Soho",
+    "London Fields, Hackney Central",
+    "Brushfield Street, Liverpool Street",
+    "Liverpool Road (N1 Centre), Angel",
+    "Waterloo Station 1, Waterloo"
+  ),
+  E_Bike_Counts = c(
+    7098, 6937, 6551, 6393, 5955, 5220, 4890, 4890, 4701, 4686
+  )
+)
+
+pdf_table <- kable(data, format = "latex", booktabs = TRUE, caption = "Top 10 Bike Stations Comparison") %>%
+  kable_styling(font_size = 7) %>%
+  column_spec(1, bold = TRUE)
+
+pdf_table
+```
+
+# The 'How': Predicting Usage of Specific Stations by Weekday and Time
+
+## Methodology
+
+To predict ebike usage across various stations on different weekdays and times, only ebike trip data was selected for analysis. The data was organized using the groupby() function to group "Start Station," "Weekday," and "Hour" into one row, resulting in 98,375 entries. The Random Forest algorithm was employed due to its robustness in handling multiple features without the risk of overfitting. The dataset was split in an 80:20 ratio for training and testing, respectively.
+
+```{r}
+df_ebike = df_year_na %>% filter(`Bike.model` == 'PBSC_EBIKE')
+demand_data = df_ebike %>%
+  group_by(`Start.station`, Weekday, Hour) %>%
+  summarise(Demand = n(), .groups = 'drop')
+
+#head(demand_data)
+```
+
+```{r}
+unique_stations = unique(demand_data$`Start.station`)
+#head(unique_stations)
+```
+```{r}
+# Prepare data
+X = demand_data %>%
+  select(-Demand) %>%
+  mutate(across(where(is.factor), as.character)) %>%  # Ensure all factor variables are converted to character variables for dummy encoding
+  dummyVars(~., data = .) %>%  # Perform dummy encoding
+  predict(newdata = demand_data)
+
+y = demand_data$Demand
+
+# Split the dataset
+set.seed(42)
+trainIndex <- createDataPartition(y, p = .8, list = FALSE)
+X_train <- X[trainIndex, ]
+X_test <- X[-trainIndex, ]
+y_train <- y[trainIndex]
+y_test <- y[-trainIndex]
+```
+
+```{r}
+# model = randomForest(x = X_train, y = y_train, ntree = 100, mtry = 3, importance = TRUE, na.action = na.omit)
+# y_pred = predict(model, X_test)
+# mse = mse(y_test, y_pred)
+# cat("Mean Squared Error:", mse, "\n")
+```
+
+```{r}
+# data <- data.frame(Actual = y_test, Predicted = y_pred)
+# data$Error <- data$Actual - data$Predicted
+# 
+# # Generate the first plot: Actual vs. Predicted Values
+# p1 <- ggplot(data, aes(x = Actual, y = Predicted)) +
+#   geom_point(alpha = 0.3) +
+#   labs(title = "Actual vs. Predicted Values", x = "Actual values", y = "Predicted values") +
+#   theme_minimal(base_size = 15)
+# 
+# # Generate the second plot: Prediction Errors
+# p2 <- ggplot(data, aes(x = Error)) +
+#   geom_histogram(bins = 25, fill = "blue", alpha = 0.7) +
+#   labs(title = "Prediction Errors", x = "Prediction Error", y = "Frequency") +
+#   theme_minimal(base_size = 15)
+# 
+# # Generate the third plot: Residual Plot
+# p3 <- ggplot(data, aes(x = Actual, y = Error)) +
+#   geom_point(alpha = 0.5) +
+#   geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+#   labs(title = "Residual Plot", x = "Actual Values", y = "Residuals") +
+#   theme_minimal(base_size = 15)
+# 
+# # Use cowplot to arrange the three plots side by side
+# plot_grid(p1, p2, p3, labels = "AUTO", ncol = 3)
+```
+
+## Results and Discussions
+
+The final model achieved a Mean Squared Error (MSE) of 14.66, which is relatively low given the total number of entries. The residual plot shows that most data points are close to the y=0 line, indicating that the model's predictions are generally accurate. However, inaccuracies tend to increase with larger usage values, although most predictions remain reliable. Using this prediction model is straightforward: simply input the station name, weekday, and time, and the model will generate the predicted number of e-bike uses. For example, if you want to know the demand for LSBU (Borough Road) at 19:00 on Thursday, the output would be: "Predicted demand for LSBU (Borough Road), Elephant & Castle on Thursday at 19:00 is 6.45."
+
+```{r,fig.width=20, fig.height=4}
+img <- readPNG("random forest.png")
+
+ggplot() +
+  annotation_custom(
+    rasterGrob(img, width = unit(1, "npc"), height = unit(1, "npc")),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
+  ) +
+  theme_void()
+```
+
+
+
+# A Case Study of station “St. James's Square, St. James's”
+St. James's Square is the station with the highest e-bike usage. This section examines the travel patterns in this area.
+
+## Methodology
+The trip data, which includes trips that start or end at the station “St. James's Square, St. James's” and are made using e-bikes, was filtered from the main dataset. The plots below show the trips from 6am to 9pm.
+
+```{r}
+ebikes_df <- df_year_na[df_year_na$`Bike.model` == 'PBSC_EBIKE', ]
+
+st_james_ebikes <- ebikes_df[ebikes_df$`Start.station` == "St. James's Square, St. James's" | 
+                             ebikes_df$`End.station` == "St. James's Square, St. James's", ]
+
+num_trips <- nrow(st_james_ebikes)
+# cat("Number of e-bike trips at St. James's Square, St. James's:", num_trips, "\n")
+
+# average_duration <- mean(st_james_ebikes$`Total.duration (min)`, na.rm = TRUE)
+# cat("Average trip duration at St. James's Square, St. James's:", average_duration, "minutes\n")
+```
+## Results and Discussions
+The peak time is at 8am, with a high demand for trips from Putney. This location also shows significant demand after work hours. Notably, at 2pm, there is a high demand for trips between Chrisp Street Market, Poplar. More e-bikes should be considered for these locations to meet the demand.
+
+```{r, fig.width=15, fig.height=4}
+hourly_trips <- st_james_ebikes %>%
+  count(Hour) %>%
+  arrange(Hour)
+
+ggplot(hourly_trips, aes(x = as.factor(Hour), y = n)) +
+  geom_bar(stat = "identity", fill = '#25A18E') +
+  labs(title = "Distribution of Trips by Hour at St. James’s Square, St. James’s",
+       x = "Hour of the Day",
+       y = "Number of Trips") +
+  theme_grey(base_size = 15) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 12, margin = ggplot2::margin(t = 10, unit = "pt")),
+    axis.title.y = element_text(size = 12, margin = ggplot2::margin(r = 10, unit = "pt")),
+    axis.text = element_text(size = 10),
+    plot.caption = element_text(size = 10)
+  )
+```
+```{r}
+# Function to plot hourly routes
+plot_hourly_routes <- function(dataframe, max_weight = 10, min_weight = 3, map_width = 800, map_height = 500, zoom_start = 12) {
+  maps <- list()  # Initialize list to store maps for each hour
+  hours <- unique(dataframe$Hour)  # Get unique hours from the dataframe
+
+  # Calculate global max and min counts for scaling
+  global_max_count <- dataframe %>% group_by(`Start.station`, `End.station`) %>% tally() %>% pull(n) %>% max()
+  global_min_count <- dataframe %>% group_by(`Start.station`, `End.station`) %>% tally() %>% pull(n) %>% min()
+
+  # Adjust these factors to scale the difference more significantly
+  weight_factor <- max_weight - min_weight
+  opacity_factor <- 0.8 - 0.2  # Max opacity at 0.8, min at 0.2
+
+  for (hour in hours) {
+    # Initialize the base map
+    base_map <- leaflet() %>%
+      addTiles(group = "CartoDB.Positron") %>%
+      setView(lng = -0.118092, lat = 51.509865, zoom = zoom_start) %>%
+      addProviderTiles(providers$CartoDB.Positron)
+
+    # Filter data for the current hour
+    hour_data <- dataframe %>% filter(Hour == hour)
+    popular_routes <- hour_data %>%
+      group_by(`Start.station`, `End.station`, `Start station lat`, `Start station lon`, `End station lat`, `End station lon`) %>%
+      tally(name = "Count") %>%
+      arrange(desc(Count)) %>%
+      head(50)
+
+    # Add polylines for each route
+    for (i in 1:nrow(popular_routes)) {
+      row <- popular_routes[i, ]
+      start_loc <- c(row$`Start station lat`, row$`Start station lon`)
+      end_loc <- c(row$`End station lat`, row$`End station lon`)
+
+      # Normalize the count and apply it to weight and opacity
+      normalized_count <- if (global_max_count != global_min_count) {
+        (row$Count - global_min_count) / (global_max_count - global_min_count)
+      } else {
+        0
+      }
+      weight <- normalized_count * weight_factor + min_weight
+      opacity <- normalized_count * opacity_factor + 0.2  # Ensure minimum opacity isn't too low
+
+      base_map <- base_map %>% addPolylines(
+        lng = c(start_loc[2], end_loc[2]), lat = c(start_loc[1], end_loc[1]),
+        color = '#00AF91', weight = weight, opacity = opacity,
+        popup = paste0(hour, "h: ", row$`Start station`, " to ", row$`End station`, "<br>Trips: ", row$Count)
+      )
+    }
+
+    # Store the map for the current hour
+    maps[[as.character(hour)]] <- base_map
+  }
+
+  return(maps)
+}
+```
+
+```{r}
+# hourly_maps <- plot_hourly_routes(st_james_ebikes)
+# 
+# 
+# first_hour <- names(hourly_maps)[1]
+# hourly_map = hourly_maps[[first_hour]]
+# 
+# saveWidget(hourly_map, "map.html", selfcontained = TRUE)
+```
+
+```{r}
+# # Define the UI
+# ui <- fluidPage(
+#   titlePanel("Hourly Map Viewer"),
+#   sidebarLayout(
+#     sidebarPanel(
+#       sliderInput("hour", "Hour of the Day:",
+#                   min = 0, max = 23, value = 0, step = 1, width = "800px")
+#     ),
+#     mainPanel(
+#       leafletOutput("map", height = "600px")
+#     )
+#   )
+# )
+# 
+# # Define the server logic
+# server <- function(input, output, session) {
+#   # Function to create maps for each hour
+#   plot_hourly_routes <- function(dataframe, max_weight = 8, min_weight = 3, zoom_start = 12) {
+#     maps <- list()  # Initialize list to store maps for each hour
+#     hours <- unique(dataframe$Hour)
+#     
+#     # Calculate global max and min counts for scaling
+#     global_max_count <- dataframe %>% group_by(`Start.station`, `End.station`) %>% tally() %>% pull(n) %>% max()
+#     global_min_count <- dataframe %>% group_by(`Start.station`, `End.station`) %>% tally() %>% pull(n) %>% min()
+#     
+#     # Adjust these factors to scale the difference more significantly
+#     weight_factor <- max_weight - min_weight
+#     opacity_factor <- 0.8 - 0.2
+#     
+#     for (hour in hours) {
+#       # Initialize the base map
+#       base_map <- leaflet() %>%
+#         addTiles(group = "CartoDB.Positron") %>%
+#         setView(lng = -0.131767, lat = 51.506946, zoom = zoom_start) %>%
+#         addProviderTiles(providers$CartoDB.Positron)
+#       
+#       # Filter data for the current hour
+#       hour_data <- dataframe %>% filter(Hour == hour)
+#       popular_routes <- hour_data %>%
+#         group_by(`Start.station`, `End.station`, `Start station lat`, `Start station lon`, `End station lat`, `End station lon`) %>%
+#         tally(name = "Count") %>%
+#         arrange(desc(Count)) %>%
+#         head(50)  # Get top 50 routes
+#       
+#       # Add polylines for each route
+#       for (i in 1:nrow(popular_routes)) {
+#         row <- popular_routes[i, ]
+#         start_loc <- c(row$`Start station lat`, row$`Start station lon`)
+#         end_loc <- c(row$`End station lat`, row$`End station lon`)
+#         
+#         # Normalize the count and apply it to weight and opacity
+#         normalized_count <- if (global_max_count != global_min_count) {
+#           (row$Count - global_min_count) / (global_max_count - global_min_count)
+#         } else {
+#           0
+#         }
+#         weight <- normalized_count * weight_factor + min_weight
+#         opacity <- normalized_count * opacity_factor + 0.2  # Ensure minimum opacity isn't too low
+#         
+#         base_map <- base_map %>% addPolylines(
+#           lng = c(start_loc[2], end_loc[2]), lat = c(start_loc[1], end_loc[1]),
+#           color = '#00AF91', weight = weight, opacity = opacity,
+#           popup = paste0(hour, "h: ", row$`Start.station`, " to ", row$`End.station`, "<br>Trips: ", row$Count)
+#         )
+#       }
+#       
+#       # Store the map for the current hour
+#       maps[[as.character(hour)]] <- base_map
+#     }
+#     
+#     return(maps)
+#   }
+#   
+#   # Create maps for each hour
+#   hourly_maps <- plot_hourly_routes(st_james_ebikes)
+#   
+#   # Render the map based on the selected hour
+#   output$map <- renderLeaflet({
+#     hourly_maps[[as.character(input$hour)]]
+#   })
+#   
+#   # Save maps as HTML files
+#   observe({
+#     lapply(names(hourly_maps), function(hour) {
+#       saveWidget(hourly_maps[[hour]], paste0("map_", hour, ".html"), selfcontained = TRUE)
+#     })
+#     stopApp()  # Stop the Shiny app after saving all HTML files
+#   })
+# }
+# 
+# # Run the application
+# shinyApp(ui = ui, server = server)
+```
+```{r}
+img <- readPNG("maps2/hourly_map.png")
+
+ggplot() +
+  annotation_custom(
+    rasterGrob(img, width = unit(1, "npc"), height = unit(1, "npc")),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
+  ) +
+  theme_void()
+```
+
+
+```{r}
+# # Display three images per row from the maps2 folder
+# knitr::include_graphics(c("maps2/hour_6.png", "maps2/hour_7.png", "maps2/hour_8.png"))
+# knitr::include_graphics(c("maps2/hour_9.png", "maps2/hour_10.png", "maps2/hour_11.png"))
+# knitr::include_graphics(c("maps2/hour_12.png", "maps2/hour_13.png", "maps2/hour_14.png"))
+# knitr::include_graphics(c("maps2/hour_15.png", "maps2/hour_16.png", "maps2/hour_17.png"))
+# knitr::include_graphics(c("maps2/hour_18.png", "maps2/hour_19.png", "maps2/hour_20.png"))
+```
+
+# Policy Recommendation
+
+Based on the analyses conducted above, it is evident that there are notable differences between the usage patterns of classic bikes and e-bikes. In light of these distinctions, we propose strategic recommendations to promote e-bike stations effectively.
+Firstly, stations with high pedestrian traffic, particularly those situated in commercial and commuting-centric areas, are more likely to exhibit significant demand for bicycles. Therefore, prioritizing the placement of e-bike stations in these locations could capitalize on existing traffic flows and enhance accessibility for commuters and urban dwellers.
+Secondly, it is imperative to consider the temporal dynamics of bike usage, especially during peak commuting hours. Increasing the availability of e-bikes during these periods, particularly in commercial areas where commuters heavily rely on alternative transportation modes, could stimulate e-bike adoption and usage.
+Additionally, ensuring that e-bikes are adequately charged and maintained, particularly during peak hours, is essential to guarantee a seamless user experience. Stations located in commercial hubs and residential areas should be equipped with sufficient charging infrastructure and capacity to meet the demands of users returning e-bikes after their commute.
+By implementing these recommendations, transportation authorities and bike-share operators can effectively leverage the unique advantages of e-bikes and tailor their services to meet the evolving needs of urban commuters and residents. This strategic approach not only promotes sustainable transportation alternatives but also enhances the overall accessibility and usability of bike-share systems in urban environments.
+
+# Limitations of Analyses
+
+**Availability of e-Bikes and Parking**: The current dataset does not provide information on the availability of e-bikes for rent or the adequacy of parking facilities at each station. This limitation means that fluctuations in usage patterns may be influenced by the unavailability of e-bikes or insufficient parking, rather than a lack of user demand. Instances where potential users have opted not to use e-bikes could mistakenly be interpreted as low demand rather than being attributed to these logistical constraints.
+
+**Assumptions About Trip Purposes**: The purpose of each trip has been inferred based on the time of the trip and the locations of the start and end stations. This assumption might not accurately reflect the true intentions of the users. For example, a trip taken during typical commuting hours might be assumed to be for commuting purposes, but it could also be for other reasons such as leisure or personal errands. This assumption could skew the understanding of why different demographics choose to use or avoid using e-bikes, potentially leading to misinformed recommendations.
+
+
+# Conclusions
+E-bike sharing has proven to enhance urban mobility. While both classic bikes and e-bikes are components of shared bike systems, this research clearly demonstrates distinct usage patterns between them. A detailed analysis of these patterns within London's Santander Cycle Scheme has revealed significant trends and behaviors in urban mobility. The findings indicate that although overall bike usage is seasonally affected, the proportion of e-bike usage increases during the colder months. This suggests a preference for e-bikes, attributed to their electric assist feature, which provides an advantage in less favorable weather conditions. Additionally, e-bike usage is predominantly concentrated during peak commuting times, particularly during off-work hours, and is geographically focused around business districts, major transit hubs, and residential areas such as Stratford, which also shows high demand.
+Since the implementation of e-bikes in October 2022, the collected trip data through December 2023 has been substantial and has enabled the initial development of a random forest model. This model captures usage patterns at specific stations, on particular weekdays and times, with a low error rate. It can assist Transport for London (TfL) in identifying which stations are likely to experience high demand for e-bikes, thereby optimizing resource allocation and enhancing service efficiency.
+
+
+# Reference
+
+Lovelace, R., Beecham, R., Heinen, E., Vidal Tortosa, E., Yang, Y., Slade, C., Roberts, A., 2020. Is the London Cycle Hire Scheme becoming more inclusive? An evaluation of the shifting spatial distribution of uptake based on 70 million trips. Transportation Research Part A: Policy and Practice, 140, pp.1–15. Available at: https://doi.org/10.1016/j.tra.2020.07.017 [Accessed 30 Apr 2024].
+
+Bishop, J., Hauru, M., Nanni, F. and Rangel Smith, C., 2023. Unveiling London’s mobility patterns with Boris Bikes. [online] The Alan Turing Institute. Available at: https://alan-turing-institute.github.io/TuringDataStories/stories/2022-10-06-Boris-Bikes/2023-07-07-Boris-Bikes.html [Accessed 15 Apr 2024].
+
+Transport for London (TfL) (2023) TfL sets out vision to further boost cycling by making it more diverse than ever. 15 June. Available at: https://www.tfl.gov.uk (Accessed: 20 May 2024).
+
+Lime in London: Assessing the benefits of shared e-bike services and recommendations for future regulation (2023) July. Available at: https://uk.steergroup.com/sites/default/files/2023-07/Steer_Lime_Report.pdf (Accessed: 22 May 2024).
