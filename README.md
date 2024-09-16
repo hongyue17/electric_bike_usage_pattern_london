@@ -107,8 +107,13 @@ The most popular routes for classic bikes tend to have the same start and end po
 
 <br>
 
-**Classic Bike Route Distribution** (Top 1500 routes displayed)
+**Classic Bike Route Distribution** (Top 1500 routes displayed)  
+Explore the classic bike interactive map [here](https://hongyue17.github.io/electric_bike_usage_pattern_london/classic_map.html).
+<br>
+
 ![Trip Mapc](img/intermap_classicbike1.jpg)
+
+<br>
 
 **Top 5 Popular E-bike Routes**
 
@@ -122,7 +127,11 @@ The most popular routes for classic bikes tend to have the same start and end po
 
 <br>
 
-**Ebike Route Distribution** (displayed top 1500 routes)    
+**Ebike Route Distribution** (displayed top 1500 routes)  
+Explore the electric bike interactive map [here](https://hongyue17.github.io/electric_bike_usage_pattern_london/ebike_map.html).
+
+<br>
+
 ![Trip Mape](img/intermap_ebike1.jpg)
 
 <br>
