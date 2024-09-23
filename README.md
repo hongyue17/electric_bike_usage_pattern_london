@@ -2,7 +2,7 @@
 **Code:** [`Jupyter notebook`]()  
 **Presentation:** [`Full Report`](https://github.com/hongyue17/electric_bike_demand_forecast_london/blob/main/full_report.pdf) 
 
-Micromobility has proven to be a helpful last-mile solution, and shared bikes are a popular option. While classic shared bikes are common in central London, electric shared bikes have not been introduced at every station. This project aims to examine the potential expansion of the electric bike service area and identify the strategies that should be implemented.
+Micromobility is becoming a more popular way to complete the last mile of urban journeys, with shared electric bikes emerging as a convenient and eco-friendly option. While traditional pedal bikes are widely available across central London, not all stations offer electric bikes. This initiative aims to explore opportunities to expand the coverage of electric bike services and to devise plans for their effective implementation.
 
 <br>
 
