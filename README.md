@@ -7,7 +7,7 @@ Micromobility is becoming a more popular way to complete the last mile of urban 
 <br>
 
 ## 💿 Data used
-Santander introduced e-bikes in September 2022. This study used 2023 trip data from Santander Cycles, with a total of 8,563,356 journeys. In 2023, there were 800 docking stations and 12,000 bikes, including 600 electric bikes. The data was provided as open data by Transport for London (TFL).  
+Santander introduced e-bikes in September 2022. This study used 2023 trip data from Santander Cycles, with a total of 8,563,356 journeys. In 2023, there were 800 docking stations and 12,000 bikes, including 600 electric bikes. The data was provided as open data by Transport for London (TfL).  
 *Santander Cycles (formerly Barclays Cycle Hire) is a public bicycle hire scheme in London in the United Kingdom.*
 
 <br>
