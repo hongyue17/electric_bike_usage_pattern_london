@@ -163,12 +163,17 @@ The model will respond, "Predicted demand for LSBU (Borough Road), Elephant & Ca
 4. **Promote E-Bikes in Winter**
    Since e-bikes are less affected by weather conditions, a targeted winter promotion could increase ridership during colder months. Offering discounts or incentives to use e-bikes during this period could make them more attractive for commuting.
 
+<br>
+
+**Skills:** Data Cleaning and Processing, Statistical Analysis, Demand Forecasting, Geospatial Analysis, Web Scraping, Visualisation.  
+**Technology:** **Python**: Pandas, Numpy, Scikit-learn, Statsmodels, Scipy, Sklearn(Random Forest), Geopandas, Selenium, Seaborn, Matplotlib, Folium, Calplot. **R**: dplyr, tidyr, ggplot2, tmap.
+
+<br>
+<br>
+
 ## Ongoing project in the Data Visualization Mentorship Program
 To better understand ridung pattern, I used the Mapbox API to query estimated routes. The final result of the project will be an interactive dashboard where users can filteres by bike type, specific day and time, trip duration and start/end station. Below is a sneak peak of the ongoing work.
 
 ![model](img/dashboard_route_bydayandtime.gif)
 
-<br>
 
-**Skills:** Data Cleaning and Processing, Statistical Analysis, Demand Forecasting, Geospatial Analysis, Web Scraping, Visualisation.  
-**Technology:** **Python**: Pandas, Numpy, Scikit-learn, Statsmodels, Scipy, Sklearn(Random Forest), Geopandas, Selenium, Seaborn, Matplotlib, Folium, Calplot. **R**: dplyr, tidyr, ggplot2, tmap.
