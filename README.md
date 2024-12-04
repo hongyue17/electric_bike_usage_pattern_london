@@ -138,6 +138,7 @@ Explore the electric bike interactive map [here](https://hongyue17.github.io/ele
 The interactive map shows the most popular routes. A line represents a journey with a distinct start and end point, while a circle indicates that the bike was rented and returned at the same location. The wider the line and the larger the circle, the more popular the route. When hovering over a line, details such as the number of trips and the percentage of all electric bike journeys are displayed.  
 <br>
 
+![Ebike gif](img/ebike_gif.gif)
 ![Interactive Map](img/intermap_ebike_detail.png)
 
 ## 🔍 Tool for Assisting Expansion
