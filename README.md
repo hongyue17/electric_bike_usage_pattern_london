@@ -172,7 +172,9 @@ The model will respond, "Predicted demand for LSBU (Borough Road), Elephant & Ca
 <br>
 
 ## Project in the Data Visualization Mentorship Program
-To better understand ridung pattern, I used the Mapbox API to query estimated routes. The final result of the project will be an interactive dashboard where users can filteres by bike type, specific day and time, trip duration and start/end station. Below is a sneak peak of the ongoing work.
+To better understand riding patterns, I used the Mapbox API to query estimated routes. The final outcome of the project is an interactive dashboard, where users can filter by bike type, specific day and time, trip duration, and start/end stations. Below is a sneak peek of the work.
+Click here to access the [animation](https://public.tableau.com/app/profile/yuchi.lai/viz/ExploringSharedBikeinLondon/Animation) and [Pedal Bike vs E-Bike](https://public.tableau.com/app/profile/yuchi.lai/viz/SharedBikeRoutesinLondonIII/Dashboard) Tableau dashboard.
+
 
 ![model](img/dashboard_route_bydayandtime.gif)
 
