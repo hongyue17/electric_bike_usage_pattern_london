@@ -171,7 +171,7 @@ The model will respond, "Predicted demand for LSBU (Borough Road), Elephant & Ca
 <br>
 <br>
 
-## Ongoing project in the Data Visualization Mentorship Program
+## Project in the Data Visualization Mentorship Program
 To better understand ridung pattern, I used the Mapbox API to query estimated routes. The final result of the project will be an interactive dashboard where users can filteres by bike type, specific day and time, trip duration and start/end station. Below is a sneak peak of the ongoing work.
 
 ![model](img/dashboard_route_bydayandtime.gif)
